@@ -1,5 +1,5 @@
-# Drosophila-ChIP
-Drosophila ChIP
+# Example of Drosophila-ChIP
+Run through of ChIP-seq analysis in Drosophila utilising commonly used software for ChIP-seq
 
 # Fastqc
 To check sequencing data run through fastqc which should give an idea of the quality of the sequecning data
@@ -139,5 +139,35 @@ print(countSet)
 write.csv(countSet$db, "2_hours_4_1000.csv")
 ```
 
+# Defining peaks with ChIPseeker
+ChIPseeker allows the annotation of peaks and some really cool graphical visulisations that come in handy when organising your ChIP-seq data
+Very simply, to annotate diffeential peaks, ChIPseeker will compare genomic regions to gff3 or gtf files and assign an annotation (gene and feature) to a differential peak.
+
+```r
+library("rlang")
+library("ChIPseeker")
+library("GenomicFeatures")
+library("rtracklayer")
+library("RSQLite")
+txdb <- makeTxDbFromGFF("Drosophila_melanogaster.BDGP6.22.96.chr.gff3", format="gff3")
+promoter <- getPromoters(TxDb=txdb, upstream=2000, downstream=2000)
+DE = "H3K4 diffregulated.txt"
+peak <- readPeakFile(DE, as="GRanges", header=TRUE)
+tagMatrixDE <- getTagMatrix(peak, windows=promoter)
+pdf("diffregpromoter.pdf")
+tagHeatmap(tagMatrixDE, xlim=c(-2000, 2000), color="red")
+dev.off()
+peakAnnoListDE <- annotatePeak(DE, tssRegion=c(-2000, 2000), TxDb=txdb, addFlankGeneInfo = TRUE, flankDistance = 5000, overlap="all")
+pdf("Allplotdiffreg.pdf")
+plotAnnoPie(peakAnnoListDE)
+vennpie(peakAnnoListDE)
+upsetplot(peakAnnoListDE)
+upsetplot(peakAnnoListDE, vennpie=TRUE)
+dev.off()
+write.csv(peakAnnoListDE, "H3K4diffreg.csv")
+```
+
 # Clustering peaks
-Off the back of differential peak calling with ChIPComp
+Off the back of differential peak calling with ChIPComp peaks can be clustered to provide an overview of what is occuring in the genome. It is exploratory but can be very powerful. This should be thought of in a similar way to clustering analysis in RNA-seq using normalised counts but instead using normalised peak regions.
+
+
