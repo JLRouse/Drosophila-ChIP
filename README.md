@@ -1,5 +1,5 @@
 # Example of Drosophila-ChIP
-Run through of ChIP-seq analysis in Drosophila utilising commonly used software for ChIP-seq
+Pipeline of ChIP-seq analysis in Drosophila utilising commonly used ChIP software
 
 # Fastqc
 To check sequencing data run through fastqc which should give an idea of the quality of the sequecning data
@@ -58,7 +58,7 @@ bowtie2 - p 8  -x bt2reference -1 /nobackup/fbsjrou/ChIP_gz/trimmed/3_2R_4_1_tri
 bowtie2 -p 8 -x bt2reference -1 /nobackup/fbsjrou/ChIP_gz/trimmed/3_2S_4_1_trim.fastq -2 /nobackup/fbsjrou/ChIP_gz/trimmed/3_2S_4_2_trim.fastq -S 3_2S_4.sam
 ```
 
-Aligning should take place for all samples of interest, including input samples. The next step will start to seperate output ChIpped samples and inpput samples
+Aligning should take place for all samples of interest, including input samples. The next step will start to seperate output ChIpped samples and input samples
 
 # Call peaks using MACS2
 Once ChIP sequences are aligned, need to call peaks using Macs2. This program takes input samples and compares the number of reads to ChIped samples. Where ChIped samples have a much larger number of reads the software will call a peak. It is necessary to change the parameters of Macs2 to define the best peak calling parameters, this is especailly important when investgiating histone marks.
